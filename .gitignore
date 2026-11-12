@@ -1,0 +1,5 @@
+# Comptes des joueurs (pseudos, mots de passe hachés, sessions)
+data/
+node_modules/
+.env
+.env.*

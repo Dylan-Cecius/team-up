@@ -1,0 +1,15 @@
+{
+  "name": "team-up",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Annonces en direct pour trouver des coéquipiers de jeu",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "demo": "node server.js --demo",
+    "test": "node --test"
+  }
+}

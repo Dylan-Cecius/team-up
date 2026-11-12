@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="fr">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Team Up — Trouve un coéquipier connecté maintenant</title>
+	<meta name="description" content="Team Up affiche en direct les joueurs connectés qui cherchent un coéquipier : World of Warcraft, League of Legends, Valorant, CS2, Overwatch 2, Rocket League.">
+	<meta name="theme-color" content="#07080d">
+	<meta name="color-scheme" content="dark">
+	<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&display=swap">
+	<link rel="stylesheet" href="/styles.css">
+	<script type="module" src="/app.js"></script>
+</head>
+<body>
+	<a class="skip-link" href="#salon">Aller au salon</a>
+	<div class="backdrop" aria-hidden="true"></div>
+
+	<header class="topbar">
+		<a class="brand" href="/" aria-label="Team Up, accueil">
+			<span class="brand-team">TEAM</span><span class="brand-up">UP</span>
+		</a>
+		<p class="live-pill" id="live-pill">
+			<span class="pulse" aria-hidden="true"></span>
+			<span id="live-text">Connexion…</span>
+		</p>
+		<button class="btn btn-ghost cut btn-small account-btn" id="account-btn" type="button">Connexion</button>
+		<a class="btn btn-primary btn-small hide-narrow" href="#salon">Publier mon annonce</a>
+	</header>
+
+	<main>
+		<section class="hero">
+			<div class="hero-copy">
+				<p class="eyebrow">Recherche de coéquipiers en direct</p>
+				<h1>Trouve ton mate.<br><span class="hero-now">Maintenant.</span></h1>
+				<p class="lede">
+					Dis à quoi tu joues et ce que tu cherches. Team Up te montre les joueurs
+					connectés à l’instant qui cherchent la même chose, avec leur identifiant
+					pour les ajouter tout de suite.
+				</p>
+				<div class="hero-actions">
+					<a class="btn btn-primary" href="#jeux">Choisir mon jeu</a>
+					<a class="btn btn-ghost cut" href="#salon">Voir qui est en ligne</a>
+				</div>
+				<dl class="stats">
+					<div><dt>Joueurs connectés</dt><dd id="stat-online">–</dd></div>
+					<div><dt>Annonces actives</dt><dd id="stat-listings">–</dd></div>
+					<div><dt>Jeux</dt><dd id="stat-games">–</dd></div>
+				</dl>
+			</div>
+
+			<aside class="radar cut" aria-labelledby="radar-title">
+				<header class="radar-head">
+					<h2 id="radar-title">Dernières arrivées</h2>
+					<span class="radar-live"><span class="pulse" aria-hidden="true"></span>Direct</span>
+				</header>
+				<ol class="radar-list" id="radar-list"></ol>
+				<p class="radar-empty" id="radar-empty" hidden>Personne pour l’instant. Ouvre le bal&nbsp;!</p>
+			</aside>
+		</section>
+
+		<section class="section" id="jeux" aria-labelledby="jeux-title">
+			<header class="section-head">
+				<p class="eyebrow">Étape 1</p>
+				<h2 id="jeux-title">Choisis ton jeu</h2>
+			</header>
+			<div class="game-grid" id="game-grid"></div>
+		</section>
+
+		<section class="section lobby" id="salon" aria-labelledby="board-title">
+			<aside class="panel cut" aria-labelledby="form-title">
+				<p class="eyebrow">Étape 2</p>
+				<h2 id="form-title">Mon annonce</h2>
+				<p class="status" id="form-status" hidden></p>
+
+				<div class="alerts">
+					<label class="switch">
+						<input id="alerts-toggle" type="checkbox" aria-describedby="alerts-hint">
+						<span class="switch-track" aria-hidden="true"></span>
+						<span class="switch-text">Alertes joueurs compatibles <span class="badge badge-plus">Plus</span></span>
+					</label>
+					<p class="hint" id="alerts-hint"></p>
+				</div>
+
+				<form id="listing-form" novalidate>
+					<div class="field">
+						<label for="f-pseudo">Pseudo</label>
+						<input id="f-pseudo" name="pseudo" type="text" autocomplete="nickname" spellcheck="false" aria-describedby="pseudo-hint" required>
+						<p class="hint" id="pseudo-hint" hidden>Pseudo réservé par ton compte.</p>
+					</div>
+					<div class="field">
+						<label for="f-contact" id="contact-label">Identifiant</label>
+						<input id="f-contact" name="contact" type="text" autocomplete="off" spellcheck="false" aria-describedby="contact-hint" required>
+						<p class="hint" id="contact-hint">Visible par tous les joueurs du salon.</p>
+					</div>
+					<div class="field">
+						<label for="f-discord">Discord <span class="optional">facultatif</span></label>
+						<input id="f-discord" name="discord" type="text" autocomplete="off" spellcheck="false" placeholder="ton_pseudo">
+					</div>
+
+					<div class="field-grid" id="criteria-fields"></div>
+
+					<div class="field-grid">
+						<div class="field">
+							<label for="f-lang">Langue</label>
+							<select id="f-lang" name="lang"></select>
+						</div>
+						<div class="field">
+							<span class="label" id="mic-label">Micro</span>
+							<label class="switch">
+								<input id="f-mic" name="mic" type="checkbox" aria-labelledby="mic-label">
+								<span class="switch-track" aria-hidden="true"></span>
+								<span class="switch-text" id="mic-text">Sans micro</span>
+							</label>
+						</div>
+					</div>
+
+					<div class="field">
+						<label for="f-note">Message <span class="optional">facultatif</span></label>
+						<textarea id="f-note" name="note" rows="2" placeholder="Ce que tu cherches, tes horaires…"></textarea>
+					</div>
+
+					<p class="form-error" id="form-error" role="alert" hidden></p>
+
+					<button class="btn btn-primary btn-block" id="publish-btn" type="submit">Je cherche un mate</button>
+					<button class="btn btn-ghost cut btn-block" id="unpublish-btn" type="button" hidden>Retirer mon annonce</button>
+					<p class="hint center">Ton annonce disparaît dès que tu fermes cet onglet.</p>
+				</form>
+			</aside>
+
+			<div class="board">
+				<header class="board-head">
+					<div>
+						<p class="eyebrow">Étape 3 · Salon</p>
+						<h2 id="board-title">Salon</h2>
+					</div>
+					<p class="board-count" id="board-count" aria-live="polite"></p>
+				</header>
+
+				<form class="filters" id="filters" aria-label="Filtrer les joueurs"></form>
+
+				<ul class="cards" id="cards" aria-label="Joueurs qui cherchent un coéquipier"></ul>
+
+				<div class="empty cut" id="empty" hidden>
+					<p class="empty-title" id="empty-title"></p>
+					<p id="empty-text"></p>
+					<button class="btn btn-ghost cut" id="empty-action" type="button" hidden>Effacer les filtres</button>
+				</div>
+			</div>
+		</section>
+
+		<section class="section" aria-labelledby="how-title">
+			<header class="section-head">
+				<p class="eyebrow">Comment ça marche</p>
+				<h2 id="how-title">Trois gestes, compte facultatif</h2>
+			</header>
+			<ol class="steps">
+				<li class="cut">
+					<span class="step-num" aria-hidden="true">01</span>
+					<h3>Choisis ton jeu</h3>
+					<p>Chaque jeu a ses critères : faction et serveur pour WoW, rang et rôle pour les jeux classés.</p>
+				</li>
+				<li class="cut">
+					<span class="step-num" aria-hidden="true">02</span>
+					<h3>Publie ton annonce</h3>
+					<p>Ton pseudo, ton identifiant, ce que tu cherches. Elle reste en ligne tant que l’onglet est ouvert.</p>
+				</li>
+				<li class="cut">
+					<span class="step-num" aria-hidden="true">03</span>
+					<h3>Ajoute et joue</h3>
+					<p>Les joueurs les plus compatibles remontent en tête. Copie un identifiant, ajoute-le en jeu, c’est parti.</p>
+				</li>
+			</ol>
+		</section>
+	</main>
+
+	<footer class="footer">
+		<p><strong>Team Up</strong> — trouve un coéquipier connecté maintenant.</p>
+		<p class="footer-small">
+			Team Up n’est affilié à aucun éditeur. Les noms des jeux appartiennent à leurs propriétaires respectifs.
+			Ne partage jamais ton mot de passe : un identifiant de jeu suffit pour être ajouté.
+		</p>
+	</footer>
+
+	<dialog class="dialog" id="account-dialog" aria-labelledby="account-title">
+		<div class="dialog-box cut">
+			<header class="dialog-head">
+				<h2 id="account-title">Compte Team Up</h2>
+				<button class="dialog-close" id="account-close" type="button" aria-label="Fermer">
+					<span aria-hidden="true">×</span>
+				</button>
+			</header>
+
+			<div class="dialog-scroll">
+				<div id="auth-view">
+					<div class="tabs" role="tablist" aria-label="Connexion ou inscription">
+						<button id="tab-login" type="button" role="tab" aria-selected="true" aria-controls="auth-form">Connexion</button>
+						<button id="tab-register" type="button" role="tab" aria-selected="false" aria-controls="auth-form">Inscription</button>
+					</div>
+					<form class="stack" id="auth-form" role="tabpanel" novalidate>
+						<p class="hint" id="auth-intro"></p>
+						<div class="field">
+							<label for="a-pseudo">Pseudo</label>
+							<input id="a-pseudo" type="text" autocomplete="username" spellcheck="false" required>
+						</div>
+						<div class="field">
+							<label for="a-password">Mot de passe</label>
+							<input id="a-password" type="password" autocomplete="current-password" aria-describedby="a-password-hint" required>
+							<p class="hint" id="a-password-hint" hidden>Au moins 8 caractères.</p>
+						</div>
+						<div class="field" id="a-confirm-field" hidden>
+							<label for="a-confirm">Confirme le mot de passe</label>
+							<input id="a-confirm" type="password" autocomplete="new-password">
+						</div>
+						<p class="form-error" id="auth-error" role="alert" hidden></p>
+						<button class="btn btn-primary btn-block" id="auth-submit" type="submit">Se connecter</button>
+						<p class="hint center" id="auth-note" hidden>
+							Aucun e-mail n’est demandé : un mot de passe oublié ne peut pas être récupéré.
+						</p>
+					</form>
+				</div>
+
+				<div class="stack" id="account-view" hidden>
+					<section class="plus-card" aria-labelledby="plus-title">
+						<div class="plus-head">
+							<h3 id="plus-title">Team Up Plus</h3>
+							<span class="badge badge-plus" id="plus-state" hidden>Actif</span>
+						</div>
+						<ul class="plus-perks">
+							<li>Ton annonce en tête de liste</li>
+							<li>Alertes quand un joueur compatible arrive</li>
+							<li>Badge Plus sur tes annonces</li>
+						</ul>
+						<p class="hint" id="plus-info"></p>
+						<p class="form-error" id="plus-error" role="alert" hidden></p>
+						<button class="btn btn-primary btn-block" id="plus-btn" type="button">Passer à Plus</button>
+					</section>
+
+					<div class="account-id">
+						<span class="avatar" id="account-avatar" aria-hidden="true"></span>
+						<div>
+							<p class="account-pseudo" id="account-pseudo"></p>
+							<p class="hint" id="account-since"></p>
+						</div>
+					</div>
+
+					<form class="stack" id="profile-form" novalidate>
+						<div>
+							<h3>Mes identifiants</h3>
+							<p class="hint">Ils préremplissent ton annonce sur tous tes appareils.</p>
+						</div>
+						<div class="field-grid" id="profile-fields"></div>
+						<p class="form-error" id="profile-error" role="alert" hidden></p>
+						<button class="btn btn-primary btn-block" type="submit">Enregistrer</button>
+					</form>
+
+					<details class="more" id="password-details">
+						<summary>Changer de mot de passe</summary>
+						<form class="stack" id="password-form" novalidate>
+							<div class="field">
+								<label for="pw-current">Mot de passe actuel</label>
+								<input id="pw-current" type="password" autocomplete="current-password" required>
+							</div>
+							<div class="field">
+								<label for="pw-next">Nouveau mot de passe</label>
+								<input id="pw-next" type="password" autocomplete="new-password" required>
+							</div>
+							<p class="form-error" id="password-error" role="alert" hidden></p>
+							<button class="btn btn-ghost cut btn-block" type="submit">Changer le mot de passe</button>
+						</form>
+					</details>
+
+					<details class="more">
+						<summary>Supprimer mon compte</summary>
+						<form class="stack" id="delete-form" novalidate>
+							<p class="hint">Ton pseudo redevient libre et tes identifiants sont effacés. C’est définitif.</p>
+							<div class="field">
+								<label for="del-password">Mot de passe</label>
+								<input id="del-password" type="password" autocomplete="current-password" required>
+							</div>
+							<p class="form-error" id="delete-error" role="alert" hidden></p>
+							<button class="btn btn-danger btn-block" type="submit">Supprimer définitivement</button>
+						</form>
+					</details>
+
+					<button class="btn btn-ghost cut btn-block" id="logout-btn" type="button">Se déconnecter</button>
+				</div>
+			</div>
+		</div>
+	</dialog>
+
+	<div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
